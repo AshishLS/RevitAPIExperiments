@@ -65,7 +65,7 @@ namespace DirectShapeExperiments
 			XYZ bottomRightPt = new XYZ(topRightPt.X, bottomLeftPt.Y, 0);
 			XYZ topLeftPt = new XYZ(bottomLeftPt.X, topRightPt.Y, 0);
 
-			Double cellSize = 0.5; // 100th of a foot
+			Double cellSize = 3; // 100th of a foot
 
 			// Now to construct a grid, we need to generate points.
 			// Let's decide the size of the grid.
@@ -106,8 +106,7 @@ namespace DirectShapeExperiments
 			long memoryBeforeDrawing = currentProc.PrivateMemorySize64;
 			long oneMBINBytes = 1024*1024;
 			
-			dialogResult = TaskDialog.Show("Point and Index Count", String.Format("There are total {0} indexes", indexList.Count)
-			               +  String.Format(" and {0} points", pointList.Count)
+			dialogResult = TaskDialog.Show("Point Count", String.Format(" and {0} points", pointList.Count)
 			               + String.Format("\nTotal Memory consumed {0} MB", memoryBeforeDrawing / oneMBINBytes),
 			              TaskDialogCommonButtons.No | TaskDialogCommonButtons.Yes);
 			
@@ -122,7 +121,6 @@ namespace DirectShapeExperiments
 					listOfPointsOutsideTheRoom.Add(i);
 			}
 			
-			
 			// Draw for only those items which are inside the room.
 			List<ElementId> dShapeElemIDs = new List<ElementId>();
 			for (int i = 0; i < pointList.Count; i++) {
@@ -134,9 +132,12 @@ namespace DirectShapeExperiments
 				dShapeElemIDs.Add(dShape.Id);
 			}
 			
-			dialogResult = TaskDialog.Show("Boxes inside the room", String.Format("There are total {0} boxes inside the room", dShapeElemIDs.Count)
-			               +  "Continue to remove the collided boxes?",
+			dialogResult = TaskDialog.Show("Collision Boxes", String.Format("There are total {0} boxes in the room", dShapeElemIDs.Count)
+			                               + String.Format("\nThere are total {0} boxes outside the room", listOfPointsOutsideTheRoom.Count)
+			               +  "\nContinue to remove boxes outside the room?",
 			              TaskDialogCommonButtons.No | TaskDialogCommonButtons.Yes);
+			if(dialogResult == TaskDialogResult.No)
+				return null;
 			
 			if(dialogResult == TaskDialogResult.Yes)
 			{
